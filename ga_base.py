@@ -5,13 +5,12 @@ from decimal import Decimal
 
 class GeneticsLab(object):
 
-    def __init__(self, num_inputs, min_value, max_value, \
+    def __init__(self, num_inputs, soft_constraints, \
 fitness_function, population_size, percent_parents = 0.2, \
 percent_unfit = .05, probability_mutate = 0.01):
 
         self.num_inputs = num_inputs
-        self.min_value = min_value
-        self.max_value = max_value
+        self.soft_constraints = soft_constraints
         self.fitness_function = fitness_function
         self.population_size = population_size
         self.probability_mutate = probability_mutate
@@ -97,18 +96,20 @@ key = lambda x: self.fitness_dict[x])
 
         child = []
 
-        for attributes in zip(parent_1, parent_2):
+        for index, attributes in enumerate(zip(
+parent_1, parent_2)):
             if random.random() < self.probability_mutate:
-                child.append(self.mutate())
+                child.append(self.mutate(index))
             else:
                 child.append(random.choice(attributes))
         
         return tuple(child)
 
 
-    def mutate(self):
-        return Decimal(str(
-random.uniform(self.min_value, self.max_value)))
+    def mutate(self, i_index):
+        c_min = self.soft_constraints[i_index][0]
+        c_max = self.soft_constraints[i_index][1]
+        return Decimal(str(random.uniform(c_min, c_max)))
 
 
     def choose_parent(self, parents):
@@ -155,4 +156,9 @@ self.fitness_dict[parent]))
     def create_individual(self):
 
         return tuple(
-self.mutate() for count in range(self.num_inputs))
+self.mutate(count) for count in range(self.num_inputs))
+
+
+
+def set_softs(c_min, c_max, count):
+    return [(c_min, c_max)] * count
