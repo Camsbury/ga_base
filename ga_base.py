@@ -5,12 +5,17 @@ from decimal import Decimal
 
 class GeneticsLab(object):
 
-    def __init__(self, num_inputs, soft_constraints, \
-fitness_function, population_size, percent_parents = 0.2, \
-percent_unfit = .05, probability_mutate = 0.01):
+    def __init__(self, num_inputs, fitness_function, \
+population_size, c_mag = 1000, num_parents = 3, \
+num_unfit = 1, probability_mutate = 0.1, \
+soft_constraints = None):
 
         self.num_inputs = num_inputs
-        self.soft_constraints = soft_constraints
+        if soft_constraints is not None:
+            self.soft_constraints = soft_constraints
+        else:
+            self.soft_constraints = \
+[(-c_mag, c_mag)] * num_inputs
         self.fitness_function = fitness_function
         self.population_size = population_size
         self.probability_mutate = probability_mutate
@@ -18,14 +23,9 @@ percent_unfit = .05, probability_mutate = 0.01):
         self.generation = -1
         self.generation_fitness = []
 
-        self.num_parents = round(
-percent_parents * self.population_size)
-
-        self.num_unfit_parents = round(
-percent_unfit * self.num_parents)
-
-        self.num_fit_parents = \
-self.num_parents - self.num_unfit_parents
+        self.num_parents = num_parents
+        self.num_unfit = num_unfit
+        self.num_fit = num_parents - num_unfit 
 
 
     def evolve_cycles(self, cycles):
@@ -68,9 +68,9 @@ np.mean(fitnesses))
         self.population.sort(
 key = lambda x: self.fitness_dict[x])
 
-        parents = self.population[:self.num_fit_parents]
-        unfit = set(self.population[self.num_fit_parents:])
-        for count in range(self.num_unfit_parents):
+        parents = self.population[:self.num_fit]
+        unfit = set(self.population[self.num_fit:])
+        for count in range(self.num_unfit):
             choice = random.choice(tuple(unfit))
             parents.append(choice)
             unfit.remove(choice)
