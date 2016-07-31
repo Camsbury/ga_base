@@ -33,27 +33,61 @@ self.num_parents - self.num_unfit_parents
     def evolve(self):
 
         if self.generation == -1:
-            gen_zero(self)
+            self.gen_zero()
         else:
-            breed(self)
+            self.next_gen()
 
         self.generation += 1
+        self.measure_fitness()
 
 
-    def breed(self):
-        parents.sort(key = lambda x: self.fitness_dict[x])
+    def measure_fitness(self):
+
+        fitnesses = []
+        min_fitness = float('inf')
+        self.fitness_dict = {}
+
+        for individual in self.population:
+            fitness = self.fitness_function(individual)
+            self.fitness_dict[individual] = fitness
+            fitnesses.append(fitness)
+            if fitness < min_fitness:
+                min_fitness = fitness
+                most_fit = individual
+        self.most_fit = most_fit
+        self.min_fitness = min_fitness
+        self.generation_fitness.append(
+np.mean(fitnesses))
+
+
+    def next_gen(self):
+        self.population.sort(
+key = lambda x: self.fitness_dict[x])
+
         parents = self.population[:self.num_fit_parents]
         unfit = set(self.population[self.num_fit_parents:])
         for count in self.num_unfit_parents:
             choice = random.choice(unfit)
             parents.append(choice)
             unfit.remove(choice)
+        self.breed(parents)
+
+
+    def breed(self, parents):
+        self.population = parents
+        len_population = len(parents)
+        while len_population < self.population_size:
+            #choose parent 1 based on fitness
+            #choose parent 2 based on fitness
+            #birth unique
+
 
     def gen_zero(self):
 
         self.create_individual = _define_individual(
 self.num_inputs, self.min_value, self.max_value)
 
+        #reformat for creating only unique individuals
         self.population = \
 [self.create_individual() for count in self.population_size]
 
