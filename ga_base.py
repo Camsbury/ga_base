@@ -1,3 +1,13 @@
+"""
+To do:
+-Add license
+-PEP8
+-Comment
+-Create optional constraints that are governed by fitness
+-Create variable parents, unfits, and mutation probability
+"""
+
+
 import random
 import numpy as np
 from decimal import Decimal
