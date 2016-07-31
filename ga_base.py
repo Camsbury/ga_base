@@ -29,6 +29,11 @@ percent_unfit * self.num_parents)
 self.num_parents - self.num_unfit_parents
 
 
+    def evolve_cycles(self, cycles):
+        for cycle in range(cycles):
+            self.evolve()
+
+
     def evolve(self):
 
         if self.generation == -1:
@@ -85,6 +90,7 @@ key = lambda x: self.fitness_dict[x])
             individual = self.birth(parent_1, parent_2)
             if individual not in self.population:
                 self.population.append(individual)
+                len_population += 1
 
 
     def birth(self, parent_1, parent_2):
