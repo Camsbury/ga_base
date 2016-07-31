@@ -162,3 +162,7 @@ self.mutate(count) for count in range(self.num_inputs))
 
 def set_softs(c_min, c_max, count):
     return [(c_min, c_max)] * count
+
+
+def rosenbrock(x, y):
+    return (1 - x)**2 + 100*(y - x**2)**2
