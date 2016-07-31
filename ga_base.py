@@ -15,17 +15,17 @@ from decimal import Decimal
 
 class GeneticsLab(object):
 
-    def __init__(self, num_inputs, fitness_function, \
-population_size, c_mag = 1000, num_parents = 3, \
-num_unfit = 1, probability_mutate = 0.1, \
-soft_constraints = None):
+    def __init__(self, num_inputs, fitness_function,
+                 population_size, c_mag=1000, num_parents=3,
+                 num_unfit=1, probability_mutate=0.1,
+                 soft_constraints=None):
 
         self.num_inputs = num_inputs
         if soft_constraints is not None:
             self.soft_constraints = soft_constraints
         else:
             self.soft_constraints = \
-[(-c_mag, c_mag)] * num_inputs
+                [(-c_mag, c_mag)] * num_inputs
         self.fitness_function = fitness_function
         self.population_size = population_size
         self.probability_mutate = probability_mutate
@@ -35,13 +35,12 @@ soft_constraints = None):
 
         self.num_parents = num_parents
         self.num_unfit = num_unfit
-        self.num_fit = num_parents - num_unfit 
-
+        self.num_fit = num_parents - num_unfit
 
     def evolve_cycles(self, cycles):
+
         for cycle in range(cycles):
             self.evolve()
-
 
     def evolve(self):
 
@@ -52,7 +51,6 @@ soft_constraints = None):
 
         self.generation += 1
         self.measure_fitness()
-
 
     def measure_fitness(self):
 
@@ -70,13 +68,12 @@ soft_constraints = None):
         self.most_fit = most_fit
         self.min_fitness = min_fitness
         self.generation_fitness.append(
-np.mean(fitnesses))
-
+            np.mean(fitnesses))
 
     def next_gen(self):
 
         self.population.sort(
-key = lambda x: self.fitness_dict[x])
+            key=lambda x: self.fitness_dict[x])
 
         parents = self.population[:self.num_fit]
         unfit = set(self.population[self.num_fit:])
@@ -85,7 +82,6 @@ key = lambda x: self.fitness_dict[x])
             parents.append(choice)
             unfit.remove(choice)
         self.breed(parents)
-
 
     def breed(self, parents):
 
@@ -101,26 +97,23 @@ key = lambda x: self.fitness_dict[x])
                 self.population.append(individual)
                 len_population += 1
 
-
     def birth(self, parent_1, parent_2):
 
         child = []
 
         for index, attributes in enumerate(zip(
-parent_1, parent_2)):
+                parent_1, parent_2)):
             if random.random() < self.probability_mutate:
                 child.append(self.mutate(index))
             else:
                 child.append(random.choice(attributes))
-        
-        return tuple(child)
 
+        return tuple(child)
 
     def mutate(self, i_index):
         c_min = self.soft_constraints[i_index][0]
         c_max = self.soft_constraints[i_index][1]
         return Decimal(str(random.uniform(c_min, c_max)))
-
 
     def choose_parent(self, parents):
 
@@ -131,14 +124,13 @@ parent_1, parent_2)):
                 return pair[1]
         return parent_chooser[-1][1]
 
-
     def probabilitize(self, parents):
 
         parent_chooser = []
         fitness_total = Decimal('0')
         for parent in parents:
             fitness = Decimal(str(
-self.fitness_dict[parent]))
+                self.fitness_dict[parent]))
             parent_chooser.append([fitness, parent])
             fitness_total += fitness
 
@@ -162,12 +154,10 @@ self.fitness_dict[parent]))
                 pop_set.add(individual)
                 current_size += 1
 
-
     def create_individual(self):
 
         return tuple(
-self.mutate(count) for count in range(self.num_inputs))
-
+            self.mutate(count) for count in range(self.num_inputs))
 
 
 def set_softs(c_min, c_max, count):
@@ -176,4 +166,4 @@ def set_softs(c_min, c_max, count):
 
 def rosenbrock(coords):
     x, y = coords
-    return (1 - x)**2 + 100*(y - x**2)**2
+    return (1 - x)**2 + 100 * (y - x**2)**2
