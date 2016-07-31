@@ -71,7 +71,7 @@ key = lambda x: self.fitness_dict[x])
         parents = self.population[:self.num_fit_parents]
         unfit = set(self.population[self.num_fit_parents:])
         for count in range(self.num_unfit_parents):
-            choice = random.choice(unfit)
+            choice = random.choice(tuple(unfit))
             parents.append(choice)
             unfit.remove(choice)
         self.breed(parents)
@@ -164,5 +164,6 @@ def set_softs(c_min, c_max, count):
     return [(c_min, c_max)] * count
 
 
-def rosenbrock(x, y):
+def rosenbrock(coords):
+    x, y = coords
     return (1 - x)**2 + 100*(y - x**2)**2
